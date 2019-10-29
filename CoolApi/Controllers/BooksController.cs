@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CoolApi.Model;
 using CoolApi.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CoolApi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class BooksController : ControllerBase
@@ -26,7 +28,7 @@ namespace CoolApi.Controllers
         public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
         {
 
-            var book = _context.Books.Include(author => author.Author);
+            var book = _context.Books;
 
                 return await book.ToListAsync();
         }
