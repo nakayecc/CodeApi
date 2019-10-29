@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CoolApi.Model;
 using CoolApi.Models;
+using CoolApi.Models.DtoModels;
 
 namespace CoolApi.Controllers
 {
@@ -23,19 +24,43 @@ namespace CoolApi.Controllers
 
         // GET: api/Books
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
+        public async Task<List<BookDTO>> GetBooks()
         {
+            var dbBooks = _context.Books;
 
-            var book = _context.Books.Include(author => author.Author);
+            var books = from b in dbBooks
+                select new BookDTO()
+                {
+                    Id = b.Id,
+                    ISBN = b.ISBN,
+                    Name = b.Name,
+                    ReleaseDateTime = b.ReleaseDateTime,
+                    AuthorId = b.Author.Id
+                };
 
-                return await book.ToListAsync();
+            return await books.ToListAsync();
+
+
+
+
+            return null;
         }
 
         // GET: api/Books/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Book>> GetBook(int id)
+        public async Task<ActionResult<BookDTO>> GetBook(int id)
         {
-            var book = await _context.Books.FindAsync(id);
+            var dbBooks = _context.Books;
+
+            var book = await _context.Books.Include(b => b.Author).Select(b => new BookDTO()
+            {
+                Id = b.Id,
+                ISBN = b.ISBN,
+                Name = b.Name,
+                ReleaseDateTime = b.ReleaseDateTime,
+                AuthorId = b.Author.Id
+
+            }).SingleOrDefaultAsync(b => b.Id == id);
 
             if (book == null)
             {
