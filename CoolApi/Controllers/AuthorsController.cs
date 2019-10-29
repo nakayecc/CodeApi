@@ -5,58 +5,54 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using CoolApi.Model;
 using CoolApi.Models;
 
 namespace CoolApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BooksController : ControllerBase
+    public class AuthorsController : ControllerBase
     {
         private readonly BookContext _context;
 
-        public BooksController(BookContext context)
+        public AuthorsController(BookContext context)
         {
             _context = context;
         }
 
-        // GET: api/Books
+        // GET: api/Authors
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
+        public async Task<ActionResult<IEnumerable<Author>>> GetAuthors()
         {
-
-            var book = _context.Books.Include(author => author.Author);
-
-                return await book.ToListAsync();
+            return await _context.Authors.ToListAsync();
         }
 
-        // GET: api/Books/5
+        // GET: api/Authors/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Book>> GetBook(int id)
+        public async Task<ActionResult<Author>> GetAuthor(int id)
         {
-            var book = await _context.Books.FindAsync(id);
+            var author = await _context.Authors.FindAsync(id);
 
-            if (book == null)
+            if (author == null)
             {
                 return NotFound();
             }
 
-            return book;
+            return author;
         }
 
-        // PUT: api/Books/5
+        // PUT: api/Authors/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBook(int id, Book book)
+        public async Task<IActionResult> PutAuthor(int id, Author author)
         {
-            if (id != book.Id)
+            if (id != author.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(book).State = EntityState.Modified;
+            _context.Entry(author).State = EntityState.Modified;
 
             try
             {
@@ -64,7 +60,7 @@ namespace CoolApi.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BookExists(id))
+                if (!AuthorExists(id))
                 {
                     return NotFound();
                 }
@@ -77,37 +73,37 @@ namespace CoolApi.Controllers
             return NoContent();
         }
 
-        // POST: api/Books
+        // POST: api/Authors
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Book>> PostBook(Book book)
+        public async Task<ActionResult<Author>> PostAuthor(Author author)
         {
-            _context.Books.Add(book);
+            _context.Authors.Add(author);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBook", new { id = book.Id }, book);
+            return CreatedAtAction("GetAuthor", new { id = author.Id }, author);
         }
 
-        // DELETE: api/Books/5
+        // DELETE: api/Authors/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Book>> DeleteBook(int id)
+        public async Task<ActionResult<Author>> DeleteAuthor(int id)
         {
-            var book = await _context.Books.FindAsync(id);
-            if (book == null)
+            var author = await _context.Authors.FindAsync(id);
+            if (author == null)
             {
                 return NotFound();
             }
 
-            _context.Books.Remove(book);
+            _context.Authors.Remove(author);
             await _context.SaveChangesAsync();
 
-            return book;
+            return author;
         }
 
-        private bool BookExists(int id)
+        private bool AuthorExists(int id)
         {
-            return _context.Books.Any(e => e.Id == id);
+            return _context.Authors.Any(e => e.Id == id);
         }
     }
 }
