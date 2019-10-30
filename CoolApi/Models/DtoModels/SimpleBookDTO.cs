@@ -2,7 +2,7 @@
 
 namespace CoolApi.Models.DtoModels
 {
-    public class SingleBookDTO
+    public class SimpleBookDTO
     {
         public int Id { get; set; }
         public string ISBN { get; set; }
