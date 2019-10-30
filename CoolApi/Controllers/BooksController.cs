@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using System.Web.Http.Description;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -41,8 +43,6 @@ namespace CoolApi.Controllers
             return await books.ToListAsync();
 
 
-
-
             return null;
         }
 
@@ -59,7 +59,6 @@ namespace CoolApi.Controllers
                 Name = b.Name,
                 ReleaseDateTime = b.ReleaseDateTime,
                 AuthorId = b.Author.Id
-
             }).SingleOrDefaultAsync(b => b.Id == id);
 
             if (book == null)
@@ -106,12 +105,24 @@ namespace CoolApi.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Book>> PostBook(Book book)
+        public async Task<ActionResult<Book>> PostBook(BookDTO bookDto)
         {
+
+            /*var author = _context.Authors.Include(aut => aut.Books).First(a => a.Id == bookDto.AuthorId);*/
+            var author = _context.Authors.Find(bookDto.AuthorId);
+
+            var book = new Book()
+            {
+                //Id = bookDto.Id,
+                ISBN = bookDto.ISBN,
+                Name = bookDto.Name,
+                ReleaseDateTime = bookDto.ReleaseDateTime,
+                Author = author
+            };
             _context.Books.Add(book);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBook", new { id = book.Id }, book);
+            return CreatedAtAction("GetBook", new {id = book.Id}, bookDto);
         }
 
         // DELETE: api/Books/5
