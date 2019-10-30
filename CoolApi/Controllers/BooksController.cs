@@ -72,12 +72,27 @@ namespace CoolApi.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBook(int id, Book book)
+        public async Task<IActionResult> PutBook(int id, BookDTO bookDto)
         {
-            if (id != book.Id)
+
+            if (id != bookDto.Id)
             {
                 return BadRequest();
             }
+
+            if (bookDto.AuthorId.Equals(null))
+            {
+                return BadRequest();
+            }
+
+            var book = new Book()
+            {
+                Id = bookDto.Id,
+                ISBN = bookDto.ISBN,
+                Name = bookDto.Name,
+                ReleaseDateTime = bookDto.ReleaseDateTime,
+                Author = _context.Authors.Find(bookDto.AuthorId)
+            };
 
             _context.Entry(book).State = EntityState.Modified;
 
