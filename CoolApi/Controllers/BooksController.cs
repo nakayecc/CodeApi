@@ -9,10 +9,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CoolApi.Model;
 using CoolApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using CoolApi.Models.DtoModels;
+
 
 namespace CoolApi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class BooksController : ControllerBase

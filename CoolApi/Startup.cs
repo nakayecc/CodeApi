@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using CoolApi.Models;
 using Microsoft.AspNetCore.Builder;
@@ -12,6 +13,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CoolApi
 {
@@ -27,9 +30,22 @@ namespace CoolApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<BookContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("ConnectionString")));
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
+                //Walidacja tokenu 
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = "mysite.com",
+                    ValidAudience = "mysite.com",
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("sdfsddfgdgdfgdfgdfggsdsdfsdf"))
+                };
+            });
+            services.AddDbContext<BookContext>(opt =>
+                opt.UseSqlServer(Configuration.GetConnectionString("ConnectionString")));
             services.AddControllers();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,16 +56,14 @@ namespace CoolApi
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseAuthentication();
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }

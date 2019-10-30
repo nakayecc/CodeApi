@@ -4,14 +4,16 @@ using CoolApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CoolApi.Migrations
 {
     [DbContext(typeof(BookContext))]
-    partial class BookContextModelSnapshot : ModelSnapshot
+    [Migration("20191030131228_add borrowedBooks to contex")]
+    partial class addborrowedBookstocontex
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,9 +94,6 @@ namespace CoolApi.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("Permission")
                         .HasColumnType("int");
 
@@ -111,7 +110,6 @@ namespace CoolApi.Migrations
                     b.HasOne("CoolApi.Models.Author", "Author")
                         .WithMany("Books")
                         .HasForeignKey("AuthorId");
-
                 });
 
             modelBuilder.Entity("CoolApi.Models.BorrowedBooks", b =>
@@ -123,7 +121,6 @@ namespace CoolApi.Migrations
                     b.HasOne("CoolApi.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("OwnerId");
-
                 });
 #pragma warning restore 612, 618
         }
