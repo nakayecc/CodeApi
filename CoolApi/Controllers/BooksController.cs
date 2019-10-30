@@ -80,7 +80,7 @@ namespace CoolApi.Controllers
                 return BadRequest();
             }
 
-            if (bookDto.AuthorId.Equals(null))
+            if (_context.Authors.Find(bookDto.AuthorId) == null)
             {
                 return BadRequest();
             }
