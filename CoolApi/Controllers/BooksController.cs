@@ -43,7 +43,6 @@ namespace CoolApi.Controllers
             return await books.ToListAsync();
 
 
-            return null;
         }
 
         // GET: api/Books/5

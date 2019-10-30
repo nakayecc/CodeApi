@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CoolApi.Models;
+using CoolApi.Models.DtoModels;
 
 namespace CoolApi.Controllers
 {
@@ -22,9 +23,25 @@ namespace CoolApi.Controllers
 
         // GET: api/Authors
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Author>>> GetAuthors()
+        public async Task<IEnumerable<AuthorDTO>> GetAuthors()
         {
-            return await _context.Authors.ToListAsync();
+            //return await _context.Authors.ToListAsync();
+
+            var dbAuthors = await _context.Authors.Include(book => book.Books).ToListAsync();
+
+            var authors = dbAuthors.Select(author => new AuthorDTO()
+            {
+                Id = author.Id,
+                Name = author.Name,
+                Books = author.Books.Select(b => new SingleBookDTO()
+                {
+                    Id = b.Id, ISBN = b.ISBN, Name = b.Name, ReleaseDateTime = b.ReleaseDateTime
+                })
+            });
+
+
+
+            return authors;
         }
 
         // GET: api/Authors/5
