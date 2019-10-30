@@ -7,6 +7,6 @@ namespace CoolApi.Models.DtoModels
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public IEnumerable<SingleBookDTO> Books { get; set; }
+        public IEnumerable<SimpleBookDTO> Books { get; set; }
     }
 }

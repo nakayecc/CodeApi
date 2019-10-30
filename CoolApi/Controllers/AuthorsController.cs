@@ -23,17 +23,16 @@ namespace CoolApi.Controllers
 
         // GET: api/Authors
         [HttpGet]
-        public async Task<IEnumerable<AuthorDTO>> GetAuthors()
+        public async Task<List<AuthorDTO>> GetAuthors()
         {
-            //return await _context.Authors.ToListAsync();
 
             var dbAuthors = await _context.Authors.Include(book => book.Books).ToListAsync();
-
+             
             var authors = dbAuthors.Select(author => new AuthorDTO()
             {
                 Id = author.Id,
                 Name = author.Name,
-                Books = author.Books.Select(b => new SingleBookDTO()
+                Books = author.Books.Select(b => new SimpleBookDTO()
                 {
                     Id = b.Id, ISBN = b.ISBN, Name = b.Name, ReleaseDateTime = b.ReleaseDateTime
                 })
@@ -41,21 +40,34 @@ namespace CoolApi.Controllers
 
 
 
-            return authors;
+            return authors.ToList();
         }
 
         // GET: api/Authors/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Author>> GetAuthor(int id)
+        public async Task<ActionResult<AuthorDTO>> GetAuthor(int id)
         {
-            var author = await _context.Authors.FindAsync(id);
+            var dbAuthors = _context.Authors;
 
-            if (author == null)
+            var authors =await _context.Authors.Include(book => book.Books).Select(author => new AuthorDTO()
+            {
+                Id = author.Id,
+                Name = author.Name,
+                Books = author.Books.Select(b => new SimpleBookDTO()
+                {
+                    Id = b.Id,
+                    ISBN = b.ISBN,
+                    Name = b.Name,
+                    ReleaseDateTime = b.ReleaseDateTime
+                })
+            }).SingleOrDefaultAsync(author => author.Id == id);
+
+            if (authors == null)
             {
                 return NotFound();
             }
 
-            return author;
+            return authors;
         }
 
         // PUT: api/Authors/5

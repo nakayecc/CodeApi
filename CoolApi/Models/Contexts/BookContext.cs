@@ -12,12 +12,5 @@ namespace CoolApi.Models
         public DbSet<Book> Books { get; set; }
         public DbSet<Author> Authors { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Book>()
-                .HasOne(book => book.Author)
-                .WithMany(author => author.Books)
-                .IsRequired();
-        }
     }
 }
